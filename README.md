@@ -173,6 +173,7 @@ PRs welcome! Keep changes focused and test thoroughly with different table count
 <img width="1918" height="926" alt="Screenshot 2026-02-06 222544" src="https://github.com/user-attachments/assets/4356038a-43d2-4718-9df5-da4f042a3f06" />
 <img width="1918" height="926" alt="Screenshot 2026-02-06 222418" src="https://github.com/user-attachments/assets/8141cb17-6c7d-41e3-93f7-c29dda777e41" />
 <img width="1919" height="926" alt="Screenshot 2026-02-06 222609" src="https://github.com/user-attachments/assets/18b76ebe-7848-470a-afd6-7b218a18c1e0" />
+<img width="986" height="493" alt="Screenshot 2026-02-06 222852" src="https://github.com/user-attachments/assets/d517a2be-0671-4d34-bee2-a121a1048578" />
 
 ---
 
