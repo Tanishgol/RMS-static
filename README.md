@@ -40,22 +40,27 @@ A modern React + Tailwind CSS application for managing restaurant tables, orders
 
 ## Quick Start ▶️ (Windows)
 
-1. **Navigate to project folder:**
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/Restaurant-Management-System.git
+   ```
+
+2. **Navigate to project folder:**
    ```
    cd RMS-static
    ```
 
-2. **Install dependencies:**
+3. **Install dependencies:**
    ```
    npm install
    ```
 
-3. **Run development server:**
+4. **Run development server:**
    ```
    npm run dev
    ```
 
-4. **Open in browser:**
+5. **Open in browser:**
    ```
    http://localhost:5173 (or the port Vite prints)
    ```
