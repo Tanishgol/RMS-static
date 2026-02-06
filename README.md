@@ -42,7 +42,7 @@ A modern React + Tailwind CSS application for managing restaurant tables, orders
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/Restaurant-Management-System.git
+   https://github.com/Tanishgol/RMS-static
    ```
 
 2. **Navigate to project folder:**
