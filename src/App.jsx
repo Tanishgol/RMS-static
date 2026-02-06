@@ -1,37 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Sun, Moon } from 'lucide-react';
-import TableCard from './components/TableCard';
-import BillModal from './components/BillModal';
-import { STORAGE_KEY, PASSWORD } from './constants';
+import React, { useState, useEffect } from "react";
+import { Plus, Sun, Moon, History } from "lucide-react";
+import TableCard from "./components/TableCard";
+import BillModal from "./components/BillModal";
+import SalesHistoryModal from "./components/SalesHistoryModal";
+import {
+  STORAGE_KEY,
+  SALES_HISTORY_KEY,
+  PASSWORD,
+  DARK_MODE_KEY,
+} from "./constants";
 
 export default function App() {
-  const [tables, setTables] = useState([]);
-  const [tableCountInput, setTableCountInput] = useState('');
+  const [tables, setTables] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [salesHistory, setSalesHistory] = useState(() => {
+    const saved = localStorage.getItem(SALES_HISTORY_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [tableCountInput, setTableCountInput] = useState("");
   const [activeTable, setActiveTable] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) setTables(JSON.parse(saved));
-  }, []);
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem(DARK_MODE_KEY);
+    return savedMode === "true";
+  });
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tables));
   }, [tables]);
 
-  // Dark Mode Toggle Logic
+  useEffect(() => {
+    localStorage.setItem(SALES_HISTORY_KEY, JSON.stringify(salesHistory));
+  }, [salesHistory]);
+
   useEffect(() => {
     if (darkMode) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
+    localStorage.setItem(DARK_MODE_KEY, darkMode);
   }, [darkMode]);
 
   const addTables = () => {
     const count = parseInt(tableCountInput);
-    if (isNaN(count) || count <= 0) return alert('Enter a valid number');
+    if (isNaN(count) || count <= 0) return alert("Enter a valid number");
 
     const newTables = Array.from({ length: count }, (_, i) => ({
       id: tables.length + i + 1,
@@ -40,24 +59,44 @@ export default function App() {
       pendingOrders: 0,
       filledOrders: 0,
       orderItems: [],
-      orderTime: null
+      orderTime: null,
+      discount: 0,
     }));
 
     setTables([...tables, ...newTables]);
-    setTableCountInput('');
+    setTableCountInput("");
   };
 
   const deleteTable = (id) => {
-    if (prompt('Enter password to delete:') === PASSWORD) {
-      setTables(tables.filter(t => t.id !== id));
+    if (prompt("Enter password to delete:") === PASSWORD) {
+      setTables(tables.filter((t) => t.id !== id));
     } else {
-      alert('Incorrect password');
+      alert("Incorrect password");
     }
   };
 
   const updateTable = (updatedTable) => {
-    setTables(tables.map(t => t.id === updatedTable.id ? updatedTable : t));
+    setTables(tables.map((t) => (t.id === updatedTable.id ? updatedTable : t)));
     setActiveTable(updatedTable);
+  };
+
+  const handleCheckout = (billDetails) => {
+    const newRecord = {
+      billId: Date.now(),
+      date: new Date().toLocaleString(),
+      ...billDetails,
+    };
+    setSalesHistory([newRecord, ...salesHistory]);
+  };
+
+  const clearHistory = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete all sales history? This cannot be undone.",
+      )
+    ) {
+      setSalesHistory([]);
+    }
   };
 
   return (
@@ -66,32 +105,45 @@ export default function App() {
         Restaurant Management System
       </h1>
 
-      <div className="max-w-xl mx-auto flex gap-2 mb-10">
+      <div className="max-w-xl mx-auto flex flex-wrap gap-2 mb-10">
         <input
           type="number"
-          className="flex-1 p-3 border rounded-lg shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700 appearance-none
-            [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          className="flex-1 p-3 border rounded-lg shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           placeholder="Enter number of tables"
           value={tableCountInput}
           onChange={(e) => setTableCountInput(e.target.value)}
         />
-        <button onClick={addTables} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 font-semibold shadow-lg">
-          <Plus size={20} /> Add Tables
+        <button
+          onClick={addTables}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg flex items-center gap-2 font-semibold shadow-lg"
+        >
+          <Plus size={20} /> Add
         </button>
+
+        <button
+          onClick={() => setShowHistoryModal(true)}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-lg flex items-center gap-2 font-semibold shadow-lg"
+        >
+          <History size={20} /> History
+        </button>
+
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+          className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg transition-colors"
         >
           {darkMode ? <Moon size={20} /> : <Sun size={20} />}
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-        {tables.map(table => (
+        {tables.map((table) => (
           <TableCard
             key={table.id}
             table={table}
-            onView={() => { setActiveTable(table); setShowModal(true); }}
+            onView={() => {
+              setActiveTable(table);
+              setShowModal(true);
+            }}
             onDelete={() => deleteTable(table.id)}
           />
         ))}
@@ -102,6 +154,15 @@ export default function App() {
           table={activeTable}
           onClose={() => setShowModal(false)}
           onUpdate={updateTable}
+          onCheckout={handleCheckout}
+        />
+      )}
+
+      {showHistoryModal && (
+        <SalesHistoryModal
+          history={salesHistory}
+          onClose={() => setShowHistoryModal(false)}
+          onClearHistory={clearHistory}
         />
       )}
     </div>

@@ -1,6 +1,8 @@
-export const TAX_PERCENTAGE = 10;
+export const TAX_PERCENTAGE = 18;
 export const PASSWORD = "Hello@123";
 export const STORAGE_KEY = "restaurantTables";
+export const SALES_HISTORY_KEY = "restaurantSalesHistory";
+export const DARK_MODE_KEY = 'darkMode';
 
 export const MENU_ITEMS = [
   { name: "Pasta", price: 300 },
